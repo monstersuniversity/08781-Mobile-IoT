@@ -5,7 +5,8 @@
     android:weightSum="1">
 
     <com.github.mikephil.charting.charts.PieChart
-        android:layout_width="368dp"
-        android:layout_height="495dp"
-        android:id="@+id/idPieChart"></com.github.mikephil.charting.charts.PieChart>
+        android:layout_width="match_parent"
+        android:layout_height="231dp"
+        android:id="@+id/idPieChart"
+        android:layout_weight="0.87"></com.github.mikephil.charting.charts.PieChart>
 </LinearLayout>

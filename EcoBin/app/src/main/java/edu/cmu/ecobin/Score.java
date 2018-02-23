@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 
 /**
  * Created by Onedollar on 2/22/18.
@@ -23,6 +25,12 @@ public class Score extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.score, container, false);
+        View rootView = inflater.inflate(R.layout.score, container, false);
+        ListView listView = (ListView)rootView.findViewById(R.id.scoreListView);
+
+        return rootView;
     }
+
+
+
 }
