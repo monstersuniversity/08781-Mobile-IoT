@@ -84,6 +84,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_history:
                 fragment = new History();
                 break;
+            case R.id.nav_tree:
+                fragment = new Tree();
+                break;
         }
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
