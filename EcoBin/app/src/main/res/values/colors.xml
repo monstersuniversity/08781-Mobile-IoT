@@ -4,4 +4,18 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="blue">#b2b9e1</color>
+
+    <color name="chartColorMonth1">#FB9289</color>
+    <color name="chartColorMonth2">#FAAA80</color>
+    <color name="chartColorMonth3">#F9C576</color>
+    <color name="chartColorMonth4">#FAE494</color>
+    <color name="chartColorMonth5">#FBF4A2</color>
+    <color name="chartColorMonth6">#E5EF9F</color>
+    <color name="chartColorMonth7">#B4DB84</color>
+    <color name="chartColorMonth8">#82C0AC</color>
+    <color name="chartColorMonth9">#719DEF</color>
+    <color name="chartColorMonth10">#8A9CF4</color>
+    <color name="chartColorMonth11">#9768E8</color>
+    <color name="chartColorMonth12">#EF25E8</color>
+
 </resources>

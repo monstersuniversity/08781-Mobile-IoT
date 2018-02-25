@@ -1,12 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1">
 
-    <com.github.mikephil.charting.charts.PieChart
+    <!--<com.github.mikephil.charting.charts.PieChart-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="231dp"-->
+        <!--android:id="@+id/idPieChart"-->
+        <!--android:layout_weight="0.87"></com.github.mikephil.charting.charts.PieChart>-->
+
+
+    <TextView
+        android:id="@+id/textView3"
         android:layout_width="match_parent"
-        android:layout_height="231dp"
-        android:id="@+id/idPieChart"
-        android:layout_weight="0.87"></com.github.mikephil.charting.charts.PieChart>
+        android:layout_height="wrap_content"
+        android:layout_weight="0.08"
+        android:text="This Week"
+        android:textAlignment="viewStart"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <org.eazegraph.lib.charts.PieChart
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/piechart"
+        android:layout_width="wrap_content"
+        android:layout_height="259dp"
+        android:padding="8dp"
+        app:egLegendTextSize="18sp"
+        app:egUsePieRotation="true"
+        app:egValueTextSize="36sp"
+        app:egInnerValueUnit="%"
+        android:layout_weight="0.20" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.08"
+        android:text="Your recycle/trash ratio is 32%, see how your frineds did in scoreboard." />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.08"
+        android:text="Level 3 : 500 exp to the next level" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:srcCompat="@drawable/image"
+        android:layout_weight="0.46" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.05"
+        android:fontFamily="serif-monospace"
+        android:text="FUN FACT EVERYDAY"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:typeface="monospace" />
+
+    <ScrollView
+        android:id="@+id/ScrollView01"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Every three months, Americans throw enough aluminum in the landfills to build our nation's entire commercial air fleet."
+            android:editable="false"/>
+
+    </ScrollView>
+
 </LinearLayout>

@@ -1,34 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textAlignment="center" />
 
     <org.eazegraph.lib.charts.BarChart
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/barchart"
+        android:id="@+id/barchart_month"
         android:layout_width="match_parent"
-        android:layout_height="256dp"
+        android:layout_height="185dp"
         android:padding="10dp"
         app:egFixedBarWidth="true"
         app:egBarWidth="20dp"
-        app:egLegendHeight="40dp"/>
+        app:egLegendHeight="40dp"
+        android:layout_weight="0.37" />
 
-    <!--<org.eazegraph.lib.charts.BarChart-->
-        <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-        <!--android:id="@+id/barchart2"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="256dp"-->
-        <!--android:padding="10dp"-->
-        <!--app:egFixedBarWidth="true"-->
-        <!--app:egBarWidth="20dp"-->
-        <!--app:egLegendHeight="40dp"/>-->
-    <org.eazegraph.lib.charts.PieChart
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/piechart"
+    <TextView
+        android:id="@+id/chartTitle_month"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:padding="8dp"
-        app:egLegendTextSize="18sp"
-        app:egUsePieRotation="true"
-        app:egValueTextSize="36sp"/>
+        android:layout_height="wrap_content"
+        android:layout_weight="0.35"
+        android:text="Past Eight Weeks Recycle Rate in this year "
+        android:textAlignment="center" />
+
+    <org.eazegraph.lib.charts.BarChart
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/barchart_year"
+        android:layout_width="match_parent"
+        android:layout_height="185dp"
+        android:padding="10dp"
+        app:egFixedBarWidth="true"
+        app:egBarWidth="20dp"
+        app:egLegendHeight="40dp" />
+
+    <TextView
+        android:id="@+id/charTitle_year"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Each Month Recycle Rate in 2017"
+        android:textAlignment="center" />
+
+
 </LinearLayout>
