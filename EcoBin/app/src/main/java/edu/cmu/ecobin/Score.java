@@ -32,7 +32,7 @@ public class Score extends Fragment {
             "Chandler",
             "Rachel",
             "Monica",
-            "Phoebe",
+            "Me",
             "Ross",
             "Tracy",
             "Andrew"
@@ -52,7 +52,7 @@ public class Score extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().setTitle("Score Board");
+        getActivity().setTitle("Scoreboard");
 
     }
 
@@ -76,7 +76,7 @@ public class Score extends Fragment {
         user_rank = (TextView) rootView.findViewById(R.id.user_rank);
         user_rank.setText("Rank: 5");
         user_number = (TextView) rootView.findViewById(R.id.user_number);
-        user_number.setText("87%");
+        user_number.setText("32%");
 
 
         list=(ListView)rootView.findViewById(R.id.list);
