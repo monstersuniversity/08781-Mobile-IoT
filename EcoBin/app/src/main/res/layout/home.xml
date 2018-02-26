@@ -38,14 +38,14 @@
         android:id="@+id/textView6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.08"
+        android:layout_weight="0.15"
         android:text="Your recycle/trash ratio is 32%, see how your frineds did in scoreboard." />
 
     <TextView
         android:id="@+id/textView7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.08"
+        android:layout_weight="0.04"
         android:text="Level 3 : 500 exp to the next level" />
 
     <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
@@ -56,15 +56,21 @@
         app:rcBackgroundPadding="5dp"/>
 
     <TextView
+        android:id="@+id/textView8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.08"
+        android:text="" />
+
+    <TextView
         android:id="@+id/textView4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.05"
-        android:fontFamily="serif-monospace"
+        android:layout_weight="0.12"
         android:text="FUN FACT EVERYDAY"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:typeface="monospace" />
+        android:textAllCaps="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textStyle="bold" />
 
     <ScrollView
         android:id="@+id/ScrollView01"
