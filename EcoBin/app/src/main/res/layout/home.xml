@@ -39,7 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.15"
-        android:text="Your recycle/trash ratio is 32%, see how your frineds did in scoreboard." />
+        android:text="Your recycle/trash ratio is 32%, see how your friends did in scoreboard." />
 
     <TextView
         android:id="@+id/textView7"
@@ -67,7 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.12"
-        android:text="FUN FACT EVERYDAY"
+        android:text="DAILY FUN FACT"
         android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textStyle="bold" />
@@ -81,7 +81,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Every three months, Americans throw enough aluminum in the landfills to build our nation's entire commercial air fleet."
+            android:text="Every three months, Americans throw away enough aluminum into landfills to rebuild the United State's entire commercial air fleet."
             android:editable="false"/>
 
     </ScrollView>
