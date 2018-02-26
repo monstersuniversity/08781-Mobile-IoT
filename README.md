@@ -6,3 +6,8 @@
 
 # Reference
 https://github.com/blackfizz/EazeGraph
+
+https://github.com/monstersuniversity/08781-Mobile-IoT/blob/master/Images/history.png
+https://github.com/monstersuniversity/08781-Mobile-IoT/blob/master/Images/score.png
+https://github.com/monstersuniversity/08781-Mobile-IoT/blob/master/Images/home.png
+https://github.com/monstersuniversity/08781-Mobile-IoT/blob/master/Images/menu.png
