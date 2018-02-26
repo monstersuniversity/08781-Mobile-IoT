@@ -35,7 +35,7 @@ public class CustomListAdapter extends ArrayAdapter<String> {
 
         numbers = new int[itemname.length];
         for (int i = 0; i < numbers.length; i++) {
-            numbers[i] = 95 - 2 * i;
+            numbers[i] = 40 - 2 * i;
         }
     }
 
