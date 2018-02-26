@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.35"
-        android:text="Past Eight Weeks Recycle Rate in this year "
+        android:text="Recycle Rates for the Last 6 Weeks"
         android:textAlignment="center" />
 
     <org.eazegraph.lib.charts.BarChart
@@ -44,7 +44,7 @@
         android:id="@+id/charTitle_year"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Each Month Recycle Rate in 2017"
+        android:text="Monthly Recycle Rates for 2017"
         android:textAlignment="center" />
 
 
