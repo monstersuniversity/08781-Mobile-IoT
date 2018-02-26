@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 public class Home extends Fragment {
 
     org.eazegraph.lib.charts.PieChart mPieChart;
+    RoundCornerProgressBar progress;
 
 //    private static String TAG = "MainActivity";
 //
@@ -96,6 +98,12 @@ public class Home extends Fragment {
         mPieChart.addPieSlice(new PieModel("Recycle Percentage", 32, Color.parseColor("#FE6DA8")));
         mPieChart.addPieSlice(new PieModel("Trash Percentage", 68, Color.parseColor("#56B7F1")));
         mPieChart.startAnimation();
+
+        progress = (RoundCornerProgressBar) rootView.findViewById(R.id.progress);
+        progress.setProgressColor(Color.parseColor("#00FF7F"));
+        progress.setProgressBackgroundColor(Color.parseColor("#8FBC8F"));
+        progress.setMax(70);
+        progress.setProgress(50);
 
 //        Log.d(TAG, "onCreate: starting to create chart");
 //

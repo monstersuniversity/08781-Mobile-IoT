@@ -48,12 +48,12 @@
         android:layout_weight="0.08"
         android:text="Level 3 : 500 exp to the next level" />
 
-    <ImageView
-        android:id="@+id/imageView2"
+    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+        android:id="@+id/progress"
+        android:layout_height="45dp"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:srcCompat="@drawable/image"
-        android:layout_weight="0.46" />
+        app:rcRadius="5dp"
+        app:rcBackgroundPadding="5dp"/>
 
     <TextView
         android:id="@+id/textView4"
