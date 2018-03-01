@@ -81,7 +81,6 @@ public class Score extends Fragment {
 
         list=(ListView)rootView.findViewById(R.id.list);
 
-
         list.setAdapter(adapter);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {

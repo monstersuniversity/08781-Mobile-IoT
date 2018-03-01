@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.35"
-        android:text="Recycle Rates for the Last 6 Weeks"
+        android:text="Recycle Rates for the Last 8 Weeks"
         android:textAlignment="center" />
 
     <org.eazegraph.lib.charts.BarChart
