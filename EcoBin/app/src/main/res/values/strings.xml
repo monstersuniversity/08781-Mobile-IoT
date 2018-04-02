@@ -6,4 +6,12 @@
 
     <string name="action_settings">Settings</string>
     <string name="voice">Voice Assistance</string>
+    <string name="facebook_app_id">2189046941110418</string>
+    <string name="fb_login_protocol_scheme">fb2189046941110418</string>
+    <string name="activity_landing">Landing Page</string>
+
+
+
+
+
 </resources>

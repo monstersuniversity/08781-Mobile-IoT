@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "229808120303",
+    "firebase_url": "https://ecobin-6b28a.firebaseio.com",
+    "project_id": "ecobin-6b28a",
+    "storage_bucket": "ecobin-6b28a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229808120303:android:ca56a51257c64216",
+        "android_client_info": {
+          "package_name": "edu.cmu.ecobin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "229808120303-h1g52n45eifod9it6feocl79fci857fq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.cmu.ecobin",
+            "certificate_hash": "2d804b594c39ca9eeaca6a6ad95bd2a863f4970a"
+          }
+        },
+        {
+          "client_id": "229808120303-d7a3clg8dfde9eb1998b8ivc1ki975t6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKbNNF9serY9ap6BA-tfTOavOB8a7hcGQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "229808120303-d7a3clg8dfde9eb1998b8ivc1ki975t6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

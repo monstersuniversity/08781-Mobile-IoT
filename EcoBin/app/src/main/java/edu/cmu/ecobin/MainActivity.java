@@ -17,6 +17,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.login.LoginManager;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -86,6 +88,12 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_tree:
                 fragment = new Tree();
+                break;
+            case R.id.nav_signout:
+                LoginManager.getInstance().logOut();
+                Log.i("MainActivity","Logout");
+                Intent loginActivityIntent = new Intent(this, LoginActivity.class);
+                startActivity(loginActivityIntent);
                 break;
         }
         if (fragment != null) {
