@@ -2,6 +2,7 @@ package edu.cmu.ecobin;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -18,6 +19,11 @@ import com.facebook.login.widget.LoginButton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 
 public class LoginActivity extends Activity {
@@ -28,8 +34,10 @@ public class LoginActivity extends Activity {
     private TextView email_textview;
     private TextView name_textview;
     private TextView token_textview;
+    private LoginResult fbLoginResult;
     String name;
     String email;
+    String tokenSession;
 
 
     @Override
@@ -44,12 +52,17 @@ public class LoginActivity extends Activity {
 
         // Set the initial permissions to request from the user while logging in
         mLoginButton.setReadPermissions(Arrays.asList(EMAIL));
+        if (isLoggedIn()) {
+            Log.d("LoginActivity", "already login");
+            Intent mainActivityIntent = new Intent(this, MainActivity.class);
+            // startActivity(mainActivityIntent);
+        }
 
         // Register a callback to respond to the user
         mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(final LoginResult loginResult) {
-                Log.d("myTag", "on success");
+                Log.d("LoginActivity", "on success");
 
 
                 GraphRequest request = GraphRequest.newMeRequest(
@@ -69,7 +82,10 @@ public class LoginActivity extends Activity {
                                     name_textview.setText(LoginActivity.this.name);
 
                                     token_textview.setText(loginResult.getAccessToken().getToken());
+                                    LoginActivity.this.tokenSession = loginResult.getAccessToken().getToken();
 
+                                    String requestBody = buildSetUserSessionRequestBody();
+                                    new sendUserInfo(requestBody).execute();
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -107,7 +123,108 @@ public class LoginActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            startActivity(mainActivityIntent);
+            // startActivity(mainActivityIntent);
+
         }
+    }
+    public boolean isLoggedIn() {
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        return accessToken != null;
+    }
+
+    private class sendUserInfo extends AsyncTask<String, String, JSONObject> {
+        String body;
+
+        sendUserInfo(String body) {
+            this.body = body;
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... strings) {
+            // Create URL
+            try {
+                URL myEndpoint = new URL("http://ec2-52-87-198-206.compute-1.amazonaws.com:3000/setUserSession");
+
+                HttpURLConnection myConnection
+                        = (HttpURLConnection) myEndpoint.openConnection();
+
+                myConnection.setRequestMethod("POST");
+
+
+                myConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+                myConnection.setRequestProperty("Accept", "application/json");
+                myConnection.setDoOutput(true);
+                myConnection.setDoInput(true);
+
+                byte[] outputInBytes = this.body.getBytes("UTF-8");
+                OutputStream os = myConnection.getOutputStream();
+                os.write(outputInBytes);
+                os.close();
+                Log.i("LoginActivityEmail", "!!!!!!!!!!!!!!!!!!!!!");
+
+                if (myConnection.getResponseCode() == 200) {
+
+                    // Read data from response.
+                    StringBuilder builder = new StringBuilder();
+                    BufferedReader responseReader = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
+                    String line = responseReader.readLine();
+                    while (line != null) {
+                        builder.append(line);
+                        line = responseReader.readLine();
+                    }
+                    String responseString = builder.toString();
+                    Log.v(getClass().getName(), "Response String: " + responseString);
+                    JSONObject responseJson = new JSONObject(responseString);
+                    // Close connection and return response code.
+                    myConnection.disconnect();
+
+                    return responseJson;
+                } else {
+                    // Error handling code goes here
+                    String a = "" + myConnection.getResponseCode();
+                    Log.i("Failure- Status Code", a);
+                    Log.i("Failure- StatusMessage", myConnection.getResponseMessage());
+
+                }
+                myConnection.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+        protected void onPostExecute(JSONObject responseJson) {
+            if(responseJson!= null && responseJson.has("status") ) {
+                try {
+                    String result = responseJson.getString("status");
+                    Log.v("result in postexecute", result);
+                    if (result.equals("success")){
+                        Log.v("session API success", "result");
+                        Log.v("responseJson", responseJson.toString());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(responseJson!= null && responseJson.has("userId")){
+                try{
+                    String id = responseJson.getString("userId");
+                    Log.v("LoginActivity", id);
+                } catch(JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+    private String buildSetUserSessionRequestBody(){
+        String body = "{"
+                + "\"name\": \"" + this.name + "\""
+                + ",\"email\": \"" + this.email + "\""
+                + ",\"sessionToken\": \"" + this.tokenSession + "\""
+                + "}";
+        Log.v("setuserreq body", body);
+        return body;
     }
 }
