@@ -1,6 +1,8 @@
 package edu.cmu.ecobin;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,15 +18,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.facebook.login.LoginManager;
+import com.facebook.share.Share;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String EMAIL = "email";
+    private static final String NAME = "name";
+    public static final String LOGOUTUSER = "logoutUser";
+    SharedPreferences userIdPref;
+    String TAG = "MainActivity(Menu)";
+    public static final String USERID = "userId";
+    User user = User.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        userIdPref = this.getPreferences(Context.MODE_PRIVATE);
+        Log.v(TAG, "ON CREATE");
+        if (userIdPref.contains(USERID)) {
+            Log.v(TAG, user.getUserID());
+        }
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,6 +82,8 @@ public class MainActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
+
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -91,9 +111,11 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_signout:
                 LoginManager.getInstance().logOut();
-                Log.i("MainActivity","Logout");
-                Intent loginActivityIntent = new Intent(this, LoginActivity.class);
-                startActivity(loginActivityIntent);
+                Log.i(TAG,"Logout");
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                i.putExtra(LOGOUTUSER, true);
+                startActivity(i);
+
                 break;
         }
         if (fragment != null) {
@@ -112,7 +134,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        Log.i("MyApp","I am here " + id);
         displayMenuActivity(id);
         return true;
     }

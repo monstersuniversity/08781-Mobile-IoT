@@ -1,20 +1,27 @@
 package edu.cmu.ecobin;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import android.content.SharedPreferences;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,108 +35,155 @@ import java.util.Arrays;
 
 public class LoginActivity extends Activity {
     private static final String EMAIL = "email";
-    private static final String USER_POSTS = "user_posts";
 
     private CallbackManager mCallbackManager;
-    private TextView email_textview;
-    private TextView name_textview;
-    private TextView token_textview;
-    private LoginResult fbLoginResult;
+    LoginResult fbLoginResult;
+    public static final String USERID = "userId";
+    SharedPreferences userIdPref;
+    AccessTokenTracker accessTokenTracker;
+    private static final int LOGIN = 1;
+    User fbUser;
     String name;
     String email;
-    String tokenSession;
+    String TAG = "LoginActivity";
+    TextView textview_profile_email;
+    private boolean directUserToLogout = false;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-        mCallbackManager = CallbackManager.Factory.create();
-        email_textview = (TextView) findViewById(R.id.fbemail);
-        name_textview = (TextView) findViewById(R.id.fbname);
-        token_textview = (TextView) findViewById(R.id.fbtoken);
         LoginButton mLoginButton = findViewById(R.id.login_button);
 
-        // Set the initial permissions to request from the user while logging in
-        mLoginButton.setReadPermissions(Arrays.asList(EMAIL));
-        if (isLoggedIn()) {
-            Log.d("LoginActivity", "already login");
-            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            // startActivity(mainActivityIntent);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
+        final LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setReadPermissions(Arrays.asList(EMAIL));
+        mCallbackManager = CallbackManager.Factory.create();
+        final Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+        Intent receivedIntent = getIntent();
+        if(receivedIntent.hasExtra(MainActivity.LOGOUTUSER)){
+            directUserToLogout = receivedIntent.getBooleanExtra(MainActivity.LOGOUTUSER, false);
         }
 
-        // Register a callback to respond to the user
-        mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(final LoginResult loginResult) {
-                Log.d("LoginActivity", "on success");
+        userIdPref = this.getPreferences(Context.MODE_PRIVATE);
+        Log.v("userIdPref.contains", String.valueOf(userIdPref.getAll()));
 
 
-                GraphRequest request = GraphRequest.newMeRequest(
-                        loginResult.getAccessToken(),
-                        new GraphRequest.GraphJSONObjectCallback() {
-                            @Override
-                            public void onCompleted(JSONObject object, GraphResponse response) {
-                                Log.v("LoginActivity", response.toString());
+        if (userIdPref.contains(USERID) && !directUserToLogout){
+            fbUser = User.getInstance();
+            fbUser.setUserID(userIdPref.getString(USERID, null));
+            Log.v("user singleton", "should" +
+                    "" +
+                    "/ be set to" + fbUser.getUserID());
+            startActivityForResult(myIntent, LOGIN);
 
-                                // Application code
-                                try {
-                                    LoginActivity.this.name = object.getString("name");
-                                    LoginActivity.this.email = object.getString("email");
-                                    Log.i("LoginActivityName", LoginActivity.this.name);
-                                    Log.i("LoginActivityEmail", LoginActivity.this.email);
-                                    email_textview.setText(LoginActivity.this.email);
-                                    name_textview.setText(LoginActivity.this.name);
+        } else {
+            // Register a callback to respond to the user
+            mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(final LoginResult loginResult) {
+                    Log.d(TAG, "on success");
 
-                                    token_textview.setText(loginResult.getAccessToken().getToken());
-                                    LoginActivity.this.tokenSession = loginResult.getAccessToken().getToken();
+                    fbUser = User.getInstance();
+                    // App code
+                    Log.i("UserToken", loginResult.getAccessToken().getToken());
+                    Log.i("userID", loginResult.getAccessToken().getUserId());
+                    Log.v(TAG, "1");
+                    GraphRequest request = GraphRequest.newMeRequest(
+                            loginResult.getAccessToken(),
+                            new GraphRequest.GraphJSONObjectCallback() {
+                                @Override
+                                public void onCompleted(JSONObject object, GraphResponse response) {
+                                    Log.v("LoginActivity", response.toString());
 
-                                    String requestBody = buildSetUserSessionRequestBody();
-                                    new sendUserInfo(requestBody).execute();
+                                    // Application code
+                                    try {
+                                        LoginActivity.this.name = object.getString("name");
+                                        LoginActivity.this.email = object.getString("email");
+                                        Log.i("LoginActivityName", LoginActivity.this.name);
+                                        Log.i("LoginActivityEmail", LoginActivity.this.email);
 
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                        setUser(loginResult);
+
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
                                 }
 
-                            }
-                        });
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,email,gender,birthday");
-                request.setParameters(parameters);
-                request.executeAsync();
-            }
+                            });
+                    Log.v(TAG, "2");
+                    Bundle parameters = new Bundle();
+                    parameters.putString("fields", "id,name,email,gender,birthday");
+                    request.setParameters(parameters);
+                    request.executeAsync();
+                    Log.v("calling setUser now", "true");
+                    Log.v("FB returned User ID", "should be set to:" + loginResult.getAccessToken().getUserId());
+                    //myIntent.putExtra("key", value); //Optional parameters
+                    LoginActivity.this.startActivity(myIntent);
+                }
 
+                @Override
+                public void onCancel() {
+                    Log.d(TAG, "on cancel");
+
+                }
+
+                @Override
+                public void onError(FacebookException e) {
+                    Log.d(TAG, e.toString());
+
+                    // Handle exception
+
+                }
+            });
+
+        }
+        accessTokenTracker = new AccessTokenTracker() {
             @Override
-            public void onCancel() {
-                Log.d("myTag", "on cancel");
-                email_textview.setText("cancel");
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken,
+                                                       AccessToken currentAccessToken) {
+                if (currentAccessToken == null) {
+                    //clear user singleton
+                    if(fbUser != null)
+                        fbUser.clearUserID();
 
+                    //clear sharedPref
+                    SharedPreferences.Editor editor = userIdPref.edit();
+                    editor.remove(USERID);
+                    editor.apply();
+                }
             }
+        };
 
-            @Override
-            public void onError(FacebookException e) {
-                Log.d("myTag", e.toString());
-                email_textview.setText("error");
 
-                // Handle exception
-
-            }
-        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            // startActivity(mainActivityIntent);
 
-        }
+        super.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+
     }
-    public boolean isLoggedIn() {
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        return accessToken != null;
+
+
+
+    private void setUser(LoginResult loginResult){
+
+        if(name == null)
+            Log.v("name", "set to null");
+        else
+            Log.v("name ", "should be set");
+
+
+        fbLoginResult = loginResult;
+        String requestBody = buildSetUserSessionRequestBody();
+        new sendUserInfo(requestBody).execute();
     }
 
     private class sendUserInfo extends AsyncTask<String, String, JSONObject> {
@@ -160,7 +214,7 @@ public class LoginActivity extends Activity {
                 OutputStream os = myConnection.getOutputStream();
                 os.write(outputInBytes);
                 os.close();
-                Log.i("LoginActivityEmail", "!!!!!!!!!!!!!!!!!!!!!");
+
 
                 if (myConnection.getResponseCode() == 200) {
 
@@ -200,17 +254,22 @@ public class LoginActivity extends Activity {
                     Log.v("result in postexecute", result);
                     if (result.equals("success")){
                         Log.v("session API success", "result");
-                        Log.v("responseJson", responseJson.toString());
+                        Log.v(TAG, "responseJson = " + responseJson.toString());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
             if(responseJson!= null && responseJson.has("userId")){
-                try{
-                    String id = responseJson.getString("userId");
-                    Log.v("LoginActivity", id);
-                } catch(JSONException e) {
+                try {
+                    Log.v("set sharedPref", "coz not found in sharedPreferences");
+                    fbUser.setUserID(responseJson.get("userId").toString());
+                    SharedPreferences.Editor editor = userIdPref.edit();
+                    editor.putString(LoginActivity.USERID, responseJson.get("userId").toString());
+                    editor.commit();
+                    Log.v(LoginActivity.USERID, responseJson.get("userId").toString());
+
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
@@ -221,8 +280,8 @@ public class LoginActivity extends Activity {
     private String buildSetUserSessionRequestBody(){
         String body = "{"
                 + "\"name\": \"" + this.name + "\""
-                + ",\"email\": \"" + this.email + "\""
-                + ",\"sessionToken\": \"" + this.tokenSession + "\""
+                + ",\"emailId\": \"" + this.email + "\""
+                + ",\"sessionToken\": \"" + this.fbLoginResult.getAccessToken().getToken() + "\""
                 + "}";
         Log.v("setuserreq body", body);
         return body;
