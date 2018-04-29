@@ -43,8 +43,6 @@ public class Home extends Fragment {
     org.eazegraph.lib.charts.PieChart mPieChart;
     RoundCornerProgressBar progress;
     String TAG = "Home";
-    public static final String USERID = "userId";
-    SharedPreferences userIdPref;
     TextView view;
     User user = User.getInstance();;
     @Override
@@ -52,7 +50,6 @@ public class Home extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().setTitle("Home");
-        Log.v(TAG, user.getUserID());
 
     }
 
@@ -63,7 +60,7 @@ public class Home extends Fragment {
         View rootView = inflater.inflate(R.layout.home, container, false);
 
         view = (TextView)rootView.findViewById(R.id.textView8);
-        view.setText(user.getUserID());
+        view.setText(user.getUserID() + "   " + user.getUserEmail() + " " + user.getUserName() + " " + user.getFacebookID());
         mPieChart = rootView.findViewById(R.id.piechart);
 
         mPieChart.addPieSlice(new PieModel("Recycle Percentage", 32, Color.parseColor("#FE6DA8")));

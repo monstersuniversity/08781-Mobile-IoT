@@ -3,11 +3,15 @@ package edu.cmu.ecobin;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.print.PrintHelper;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -18,10 +22,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.login.LoginManager;
 import com.facebook.share.Share;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -29,6 +41,7 @@ public class MainActivity extends AppCompatActivity
     private static final String EMAIL = "email";
     private static final String NAME = "name";
     public static final String LOGOUTUSER = "logoutUser";
+    ImageView user_picture;
     SharedPreferences userIdPref;
     String TAG = "MainActivity(Menu)";
     public static final String USERID = "userId";
@@ -37,6 +50,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
         userIdPref = this.getPreferences(Context.MODE_PRIVATE);
         Log.v(TAG, "ON CREATE");
         if (userIdPref.contains(USERID)) {
@@ -58,6 +74,33 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         displayMenuActivity(R.id.nav_home);
+
+
+        View headerView = navigationView.getHeaderView(0);
+        TextView drawerUsername = (TextView) headerView.findViewById(R.id.profile_name);
+        TextView drawerAccount = (TextView) headerView.findViewById(R.id.profile_email);
+        drawerUsername.setText(user.getUserName());
+        drawerAccount.setText(user.getUserEmail());
+
+
+        user_picture=(ImageView)headerView.findViewById(R.id.profile_pic);
+        try {
+            String urlStr = "https://graph.facebook.com/"+user.getFacebookID()+"/picture?width=150&height=150";
+            Log.v("profile pic link", urlStr);
+            URL img_value = new URL(urlStr);
+            Bitmap prof_icon = BitmapFactory.decodeStream(img_value.openConnection().getInputStream());
+            if (prof_icon == null) {
+                Log.v(TAG, "null");
+            }
+
+            user_picture.setImageBitmap(prof_icon);
+//            user_picture.setImageResource(R.drawable.profilepic);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
+
+
     }
 
     @Override

@@ -39,12 +39,15 @@ public class LoginActivity extends Activity {
     private CallbackManager mCallbackManager;
     LoginResult fbLoginResult;
     public static final String USERID = "userId";
+    public static final String NAME = "name";
+    public static final String FACEBOOKID = "facebookId";
     SharedPreferences userIdPref;
     AccessTokenTracker accessTokenTracker;
     private static final int LOGIN = 1;
     User fbUser;
     String name;
     String email;
+    String facebookid;
     String TAG = "LoginActivity";
     TextView textview_profile_email;
     private boolean directUserToLogout = false;
@@ -75,9 +78,13 @@ public class LoginActivity extends Activity {
         if (userIdPref.contains(USERID) && !directUserToLogout){
             fbUser = User.getInstance();
             fbUser.setUserID(userIdPref.getString(USERID, null));
+            fbUser.setUserEmail(userIdPref.getString(EMAIL, null));
+            fbUser.setUserName(userIdPref.getString(NAME, null));
+            fbUser.setFacebookID(userIdPref.getString(FACEBOOKID, null));
+
             Log.v("user singleton", "should" +
                     "" +
-                    "/ be set to" + fbUser.getUserID());
+                    "/ be set to " + fbUser.getUserID());
             startActivityForResult(myIntent, LOGIN);
 
         } else {
@@ -91,8 +98,8 @@ public class LoginActivity extends Activity {
                     // App code
                     Log.i("UserToken", loginResult.getAccessToken().getToken());
                     Log.i("userID", loginResult.getAccessToken().getUserId());
-                    Log.v(TAG, "1");
-                    GraphRequest request = GraphRequest.newMeRequest(
+                    LoginActivity.this.facebookid = loginResult.getAccessToken().getUserId();
+                            GraphRequest request = GraphRequest.newMeRequest(
                             loginResult.getAccessToken(),
                             new GraphRequest.GraphJSONObjectCallback() {
                                 @Override
@@ -103,11 +110,11 @@ public class LoginActivity extends Activity {
                                     try {
                                         LoginActivity.this.name = object.getString("name");
                                         LoginActivity.this.email = object.getString("email");
+
                                         Log.i("LoginActivityName", LoginActivity.this.name);
                                         Log.i("LoginActivityEmail", LoginActivity.this.email);
 
                                         setUser(loginResult);
-
 
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -116,14 +123,17 @@ public class LoginActivity extends Activity {
                                 }
 
                             });
-                    Log.v(TAG, "2");
+
+
                     Bundle parameters = new Bundle();
-                    parameters.putString("fields", "id,name,email,gender,birthday");
+                    parameters.putString("fields", "id,name,email,gender,birthday, picture.type(large)");
                     request.setParameters(parameters);
                     request.executeAsync();
                     Log.v("calling setUser now", "true");
                     Log.v("FB returned User ID", "should be set to:" + loginResult.getAccessToken().getUserId());
                     //myIntent.putExtra("key", value); //Optional parameters
+
+
                     LoginActivity.this.startActivity(myIntent);
                 }
 
@@ -155,6 +165,9 @@ public class LoginActivity extends Activity {
                     //clear sharedPref
                     SharedPreferences.Editor editor = userIdPref.edit();
                     editor.remove(USERID);
+                    editor.remove(EMAIL);
+                    editor.remove(NAME);
+                    editor.remove(FACEBOOKID);
                     editor.apply();
                 }
             }
@@ -264,8 +277,14 @@ public class LoginActivity extends Activity {
                 try {
                     Log.v("set sharedPref", "coz not found in sharedPreferences");
                     fbUser.setUserID(responseJson.get("userId").toString());
+                    fbUser.setUserEmail(LoginActivity.this.email);
+                    fbUser.setUserName(LoginActivity.this.name);
+                    fbUser.setFacebookID(LoginActivity.this.facebookid);
                     SharedPreferences.Editor editor = userIdPref.edit();
                     editor.putString(LoginActivity.USERID, responseJson.get("userId").toString());
+                    editor.putString(LoginActivity.EMAIL, LoginActivity.this.email);
+                    editor.putString(LoginActivity.NAME, LoginActivity.this.name);
+                    editor.putString(LoginActivity.FACEBOOKID, LoginActivity.this.facebookid);
                     editor.commit();
                     Log.v(LoginActivity.USERID, responseJson.get("userId").toString());
 
