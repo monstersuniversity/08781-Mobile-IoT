@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity
                 LoginManager.getInstance().logOut();
                 Log.i(TAG,"Logout");
                 Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-                i.putExtra(LOGOUTUSER, true);
+//                i.putExtra(LOGOUTUSER, true);
                 startActivity(i);
 
                 break;

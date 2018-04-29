@@ -49,8 +49,7 @@ public class LoginActivity extends Activity {
     String email;
     String facebookid;
     String TAG = "LoginActivity";
-    TextView textview_profile_email;
-    private boolean directUserToLogout = false;
+//    private boolean directUserToLogout = false;
 
 
     @Override
@@ -67,15 +66,15 @@ public class LoginActivity extends Activity {
         mCallbackManager = CallbackManager.Factory.create();
         final Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
         Intent receivedIntent = getIntent();
-        if(receivedIntent.hasExtra(MainActivity.LOGOUTUSER)){
-            directUserToLogout = receivedIntent.getBooleanExtra(MainActivity.LOGOUTUSER, false);
-        }
+//        if(receivedIntent.hasExtra(MainActivity.LOGOUTUSER)){
+//            directUserToLogout = receivedIntent.getBooleanExtra(MainActivity.LOGOUTUSER, false);
+//        }
 
         userIdPref = this.getPreferences(Context.MODE_PRIVATE);
         Log.v("userIdPref.contains", String.valueOf(userIdPref.getAll()));
 
 
-        if (userIdPref.contains(USERID) && !directUserToLogout){
+        if (userIdPref.contains(USERID)){
             fbUser = User.getInstance();
             fbUser.setUserID(userIdPref.getString(USERID, null));
             fbUser.setUserEmail(userIdPref.getString(EMAIL, null));
@@ -93,7 +92,7 @@ public class LoginActivity extends Activity {
                 @Override
                 public void onSuccess(final LoginResult loginResult) {
                     Log.d(TAG, "on success");
-
+                    Log.d(TAG, "!!!!!!!!!!!!!!!!!!into else!!!!!!!!!!!!!!!!!!!!!!!!!");
                     fbUser = User.getInstance();
                     // App code
                     Log.i("UserToken", loginResult.getAccessToken().getToken());
@@ -120,6 +119,7 @@ public class LoginActivity extends Activity {
                                         e.printStackTrace();
                                     }
 
+
                                 }
 
                             });
@@ -134,7 +134,6 @@ public class LoginActivity extends Activity {
                     //myIntent.putExtra("key", value); //Optional parameters
 
 
-                    LoginActivity.this.startActivity(myIntent);
                 }
 
                 @Override
@@ -287,6 +286,9 @@ public class LoginActivity extends Activity {
                     editor.putString(LoginActivity.FACEBOOKID, LoginActivity.this.facebookid);
                     editor.commit();
                     Log.v(LoginActivity.USERID, responseJson.get("userId").toString());
+
+                    Log.v(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!before enter!!!!!!!!!!!!!!!!!!!!!!!!");
+                    LoginActivity.this.startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
                 } catch (JSONException e) {
                     e.printStackTrace();
