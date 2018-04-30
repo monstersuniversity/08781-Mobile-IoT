@@ -92,7 +92,6 @@ public class LoginActivity extends Activity {
                 @Override
                 public void onSuccess(final LoginResult loginResult) {
                     Log.d(TAG, "on success");
-                    Log.d(TAG, "!!!!!!!!!!!!!!!!!!into else!!!!!!!!!!!!!!!!!!!!!!!!!");
                     fbUser = User.getInstance();
                     // App code
                     Log.i("UserToken", loginResult.getAccessToken().getToken());
@@ -287,7 +286,6 @@ public class LoginActivity extends Activity {
                     editor.commit();
                     Log.v(LoginActivity.USERID, responseJson.get("userId").toString());
 
-                    Log.v(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!before enter!!!!!!!!!!!!!!!!!!!!!!!!");
                     LoginActivity.this.startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
                 } catch (JSONException e) {
@@ -301,7 +299,7 @@ public class LoginActivity extends Activity {
     private String buildSetUserSessionRequestBody(){
         String body = "{"
                 + "\"name\": \"" + this.name + "\""
-                + ",\"emailId\": \"" + this.email + "\""
+                + ",\"email\": \"" + this.email + "\""
                 + ",\"sessionToken\": \"" + this.fbLoginResult.getAccessToken().getToken() + "\""
                 + "}";
         Log.v("setuserreq body", body);
