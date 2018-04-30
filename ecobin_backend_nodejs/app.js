@@ -48,7 +48,6 @@ app.post('/add', function(req, res, next) {
             var year = dateObj.getFullYear();
 
             curr_date = year + "," + month + "," + day;
-            console.log(curr_date);
             var query = {
                 id: req.body.id,
                 "created_at": {
@@ -88,7 +87,7 @@ app.post('/add', function(req, res, next) {
     });
 });
 
-// post query
+// post query find today's data
 app.post('/find_by_time', function(req, res, next) {
     mongoClient.connect(mongoUrl, function(err, db) {
         var dbo = db.db("test");
@@ -96,10 +95,9 @@ app.post('/find_by_time', function(req, res, next) {
             throw err;
         } else {
             console.log('mongodb connected');
-            console.log(req.body.id);
             var query = {
                 "created_at": {
-                    $gte: new Date(req.body.time)
+                    $gte: new Date(req.body.time),
                 },
                 id: req.body.id
             }
@@ -109,11 +107,109 @@ app.post('/find_by_time', function(req, res, next) {
                         "status": "failure"
                     });
                 } else {
-                    console.log(result);
+					if (result.length == 0) {
+						res.send({
+							"answer" : 0
+						});
+					} else {
+						res.send({
+							"answer" : result[0].recycle / result[0].total * 100
+						});
+					}
+
                     db.close();
-                    res.send(result);
                 }
 
+            });
+        }
+    });
+});
+
+// post query find last n weeks' data
+app.post('/find_by_week', function(req, res, next) {
+    mongoClient.connect(mongoUrl, function(err, db) {
+        var dbo = db.db("test");
+        if (err) {
+            throw err;
+        } else {
+            console.log('mongodb connected');
+			var dateObj = new Date(new Date().getTime() + (-8) * 3600 * 1000);
+			dateObj.setDate(dateObj.getDate() - req.body.n + 7);
+			var old_dateObj = new Date(new Date().getTime() + (-8) * 3600 * 1000);
+			old_dateObj.setDate(old_dateObj.getDate() - req.body.n);
+			var month = dateObj.getMonth() + 1;
+			var day = dateObj.getDate();
+			var year = dateObj.getFullYear();
+
+			var old_month = old_dateObj.getMonth() + 1;
+			var old_day = old_dateObj.getDate();
+			var old_year = old_dateObj.getFullYear();
+
+			curr_date = year + "," + month + "," + day;
+			prev_date = old_year + "," + old_month + "," + old_day;
+			console.log(curr_date);
+			console.log(prev_date);
+            var query = {
+                "created_at": {
+                    $lt: new Date(curr_date),
+					$gte: new Date(prev_date),
+                },
+                id: req.body.id
+            }
+            dbo.collection("data").find(query).toArray(function(err, result) {
+                if (err) {
+                    res.send({
+                        "status": "failure"
+                    });
+                } else {
+					var totalPercent = 0;
+					for (var i = 0; i < result.length; i++) {
+						totalPercent = totalPercent + result[i].recycle / result[i].total;
+					}
+                    db.close();
+                    res.send({
+						"answer" : totalPercent / result.length * 100
+					});
+                }
+            });
+        }
+    });
+});
+
+// post query find by month last year
+app.post('/find_by_month', function(req, res, next) {
+    mongoClient.connect(mongoUrl, function(err, db) {
+        var dbo = db.db("test");
+        if (err) {
+            throw err;
+        } else {
+            console.log('mongodb connected');
+			start_date = req.body.year + "," + req.body.smonth;
+			end_date = req.body.year + "," + req.body.emonth;
+			console.log(new Date(start_date));
+			console.log(new Date(end_date));
+            var query = {
+                "created_at": {
+                    $lt: new Date(end_date),
+					$gte: new Date(start_date),
+                },
+                id: req.body.id
+            }
+            dbo.collection("data").find(query).toArray(function(err, result) {
+                if (err) {
+                    res.send({
+                        "status": "failure"
+                    });
+                } else {
+					var totalPercent = 0;
+					for (var i = 0; i < result.length; i++) {
+						totalPercent = totalPercent + result[i].recycle / result[i].total;
+					}
+                    db.close();
+                    res.send({
+						"answer" : totalPercent / result.length * 100
+					});
+                }
             });
         }
     });
