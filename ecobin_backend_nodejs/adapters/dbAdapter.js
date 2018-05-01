@@ -3,27 +3,27 @@ module.exports = (connection) => {
         setUserSession: (name, sessionToken, email) => {
             let promise = new Promise((resolve, reject) => {
                 name = mysql_real_escape_string(name);
-                let columnNames = 'name, session, email';
-                let columnValues = `'${name}', '${sessionToken}', '${email}'`;
-                let checkExistsQueryString = `SELECT id FROM users WHERE email = '${email}'`;
-                let updateSessionQueryString = `UPDATE users SET session = '${sessionToken}' WHERE email = '${email}'`;
-                let createUserQueryString = `INSERT INTO users (${columnNames}) VALUES (${columnValues})`;
+                var columnNames = 'name, session, email';
+                var columnValues = `'${name}', '${sessionToken}', '${email}'`;
+                var checkExistsQueryString = `SELECT id FROM users WHERE email = '${email}'`;
+                var updateSessionQueryString = `UPDATE users SET session = '${sessionToken}' WHERE email = '${email}'`;
+                var createUserQueryString = `INSERT INTO users (${columnNames}) VALUES (${columnValues})`;
 
-                
+
                 connection.query(checkExistsQueryString, (err, rows) => {
-                    
+
                     if(err) {
-                        
+
                         console.log("Error in initial check of user's existence");
                         return reject();
 
                     } else if(rows.length === 0) { //new user
-                        
+
                         connection.query(createUserQueryString, (err, rows) => {
                             if (!err) {
                                 //user created successfully, now return the userId for this user:
                                 connection.query(checkExistsQueryString, (err, rows) => {
-                                    
+
                                     if(!err) {
                                         return resolve(rows[0].id);
                                     } else {
@@ -41,7 +41,7 @@ module.exports = (connection) => {
                     } else { //existing user
                         return resolve(rows[0].id);
                     }
-                
+
                 });
             });
 
