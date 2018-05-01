@@ -17,7 +17,8 @@ module.exports = (app, dbAdapter) => {
 		dbAdapter.getFriendId(req.body.facebookid).then((userId) => {
 			res.json({
 				"status" : "success",
-				"userId" : userId
+				"userId" : userId,
+				"facebookId" : req.boey.facebookid
 			});
 		}, () => {
 			res.json({

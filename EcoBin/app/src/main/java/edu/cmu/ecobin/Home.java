@@ -180,6 +180,7 @@ public class Home extends Fragment {
         String body = "{"
                 + "\"id\": \"" + user.getUserID() + "\""
                 + ",\"time\": \"" + nowAsISO + "\""
+                + ",\"fid\": \"" + user.getFacebookID() + "\""
                 + "}";
         Log.v("fetch data body", body);
         return body;

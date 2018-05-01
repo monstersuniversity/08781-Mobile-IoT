@@ -110,11 +110,13 @@ app.post('/find_by_time', function(req, res, next) {
                 } else {
 					if (result.length == 0) {
 						res.send({
-							"answer" : 0
+							"answer" : 0,
+							"fid": req.body.fid
 						});
 					} else {
 						res.send({
-							"answer" : result[0].recycle / result[0].total * 100
+							"answer" : result[0].recycle / result[0].total * 100,
+							"fid": req.body.fid
 						});
 					}
 

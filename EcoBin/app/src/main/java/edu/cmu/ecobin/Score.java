@@ -36,6 +36,8 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 /**
@@ -49,6 +51,7 @@ public class Score extends Fragment {
     TextView user_name, user_rank, user_number;
     User user = User.getInstance();
     String friendFid;
+    Map<String, Friend> map;
 
     String[] itemname ={
             "Joey",
@@ -65,6 +68,7 @@ public class Score extends Fragment {
         getActivity().setTitle("Scoreboard");
         Log.v("Score", user.getFacebookID());
         String fid = "/" + user.getFacebookID() + "/friends";
+        map = new HashMap<>();
 
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         GraphRequest request = GraphRequest.newGraphPathRequest(
@@ -77,7 +81,12 @@ public class Score extends Fragment {
                             JSONObject object = response.getJSONObject();
                             JSONArray arrayOfUsersInFriendList= object.getJSONArray("data");
                             String friendName = arrayOfUsersInFriendList.getJSONObject(0).get("name").toString();
+
                             String friendFid = arrayOfUsersInFriendList.getJSONObject(0).get("id").toString();
+
+                            Friend f = new Friend(friendFid);
+                            map.put(friendFid, f);
+                            f.setName(friendName);
                             Score.this.friendFid = friendFid;
                             Log.v("", friendFid);
 
@@ -218,9 +227,11 @@ public class Score extends Fragment {
             }
             if(responseJson!= null && responseJson.has("userId")){
                 try {
-                    String fid = responseJson.get("userId").toString();
-                    Log.v("get friend id", fid);
-                    String reqBody = fetchDataRequestBody(fid);
+                    String uid = responseJson.get("userId").toString();
+                    String fid = responseJson.get("facebookId").toString();
+                    map.get(fid).setUserid(uid);
+                    Log.v("get friend id", uid);
+                    String reqBody = fetchDataRequestBody(uid, fid);
                     new fetchFriendData(reqBody).execute();
 
                 } catch(JSONException e) {
@@ -239,7 +250,7 @@ public class Score extends Fragment {
         return body;
     }
 
-    private String fetchDataRequestBody(String fid){
+    private String fetchDataRequestBody(String fid, String ffid){
         TimeZone tz = TimeZone.getTimeZone("America/New_York");
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); // Quoted "Z" to indicate UTC, no timezone offset
         df.setTimeZone(tz);
@@ -248,6 +259,7 @@ public class Score extends Fragment {
         String body = "{"
                 + "\"id\": \"" + fid + "\""
                 + ",\"time\": \"" + nowAsISO + "\""
+                + ",\"ffid\": \"" + ffid + "\""
                 + "}";
         Log.v("fetch data body", body);
         return body;
@@ -322,6 +334,10 @@ public class Score extends Fragment {
                 try{
 
                     String friend_percent = responseJson.get("answer").toString();
+                    String friend_fid = responseJson.get("fid").toString();
+
+                    map.get(friend_fid).setPercent(Float.parseFloat(friend_percent));
+                    Log.v("friend infomation", map.get(friend_fid).toString());
                     Log.v("Score Activity", friend_percent);
 
                 } catch(JSONException e) {
