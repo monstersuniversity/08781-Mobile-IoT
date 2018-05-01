@@ -1,7 +1,7 @@
 module.exports = (connection) => {
     return {
         setUserSession: (name, sessionToken, email, facebookid) => {
-            let promise = new Promise((resolve, reject) => {
+            var promise = new Promise((resolve, reject) => {
                 name = mysql_real_escape_string(name);
                 var columnNames = 'name, session, email, facebookid';
                 var columnValues = `'${name}', '${sessionToken}', '${email}', '${facebookid}'`;
@@ -45,6 +45,25 @@ module.exports = (connection) => {
                 });
             });
 
+            return promise;
+        },
+        getFriendId: (facebookid) => {
+            var promise = new Promise((resolve, reject) => {
+                facebookid = mysql_real_escape_string(facebookid);
+                var columnNames = 'id, facebookid';
+                var columnValues = `${facebookid}`;
+                var postBookQuery = `SELECT id FROM users WHERE facebookid = '${facebookid}'`;
+
+                connection.query(postBookQuery, (err, rows) => {
+                    if(err) {
+                        console.log(err);
+                        console.log("Error in finding the userid");
+                        return reject();
+                    } else {
+                        return resolve(rows[0].id);
+                    }
+                })
+            });
             return promise;
         }
 
