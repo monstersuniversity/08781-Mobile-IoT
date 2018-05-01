@@ -69,6 +69,12 @@ public class Score extends Fragment {
         Log.v("Score", user.getFacebookID());
         String fid = "/" + user.getFacebookID() + "/friends";
         map = new HashMap<>();
+        Friend me = new Friend(user.getFacebookID());
+        map.put(user.getFacebookID(), me);
+        me.setUserid(user.getUserID());
+        me.setName(user.getUserName());
+        me.setPercent(user.getPercent());
+        Log.v("my infomation", map.get(user.getFacebookID()).toString());
 
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         GraphRequest request = GraphRequest.newGraphPathRequest(
@@ -255,11 +261,10 @@ public class Score extends Fragment {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); // Quoted "Z" to indicate UTC, no timezone offset
         df.setTimeZone(tz);
         String nowAsISO = df.format(new Date());
-        // TODO: userid
         String body = "{"
                 + "\"id\": \"" + fid + "\""
                 + ",\"time\": \"" + nowAsISO + "\""
-                + ",\"ffid\": \"" + ffid + "\""
+                + ",\"fid\": \"" + ffid + "\""
                 + "}";
         Log.v("fetch data body", body);
         return body;
@@ -338,6 +343,8 @@ public class Score extends Fragment {
 
                     map.get(friend_fid).setPercent(Float.parseFloat(friend_percent));
                     Log.v("friend infomation", map.get(friend_fid).toString());
+
+
                     Log.v("Score Activity", friend_percent);
 
                 } catch(JSONException e) {

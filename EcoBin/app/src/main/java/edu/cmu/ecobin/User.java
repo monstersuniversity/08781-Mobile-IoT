@@ -10,6 +10,7 @@ public class User {
     private static String userEmail;
     private static String userName;
     private static String facebookID;
+    private static float percent;
     private User(){};
     public static User getInstance(){
         if (user == null){
@@ -21,6 +22,10 @@ public class User {
     public void setUserID(String userID){
         User u = User.getInstance();
         u.userID = userID;
+    }
+    public void setPercent(float percent){
+        User u = User.getInstance();
+        u.percent = percent;
     }
     public void setUserEmail(String email){
         User u = User.getInstance();
@@ -38,6 +43,10 @@ public class User {
     public String getUserID(){
         User u = User.getInstance();
         return u.userID;
+    }
+    public float getPercent(){
+        User u = User.getInstance();
+        return u.percent;
     }
     public String getUserEmail(){
         User u = User.getInstance();

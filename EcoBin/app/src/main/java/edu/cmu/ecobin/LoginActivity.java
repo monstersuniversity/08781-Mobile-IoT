@@ -39,6 +39,7 @@ public class LoginActivity extends Activity {
     private CallbackManager mCallbackManager;
     LoginResult fbLoginResult;
     public static final String USERID = "userId";
+    public static final String PERCENT = "percent";
     public static final String NAME = "name";
     public static final String FACEBOOKID = "facebookId";
     SharedPreferences userIdPref;
@@ -166,6 +167,7 @@ public class LoginActivity extends Activity {
                     editor.remove(EMAIL);
                     editor.remove(NAME);
                     editor.remove(FACEBOOKID);
+                    editor.remove(PERCENT);
                     editor.apply();
                 }
             }

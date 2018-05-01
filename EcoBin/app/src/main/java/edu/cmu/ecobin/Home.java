@@ -55,11 +55,13 @@ import static android.content.Context.MODE_PRIVATE;
 public class Home extends Fragment {
 
     org.eazegraph.lib.charts.PieChart mPieChart;
+    public static final String PERCENT = "percent";
     String TAG = "Home";
     TextView view;
     TextView pieChartCaptionLabel;
+    SharedPreferences userIdPref;
     User user = User.getInstance();
-    Double todayPercent;
+    float todayPercent;
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -155,15 +157,17 @@ public class Home extends Fragment {
                     Log.v("fetch data success", responseJson.getClass().getName());
                     Log.v("fetch data success", "get data from object");
                     Log.v("====================", responseJson.get("answer").toString());
-                    Double answer = Double.parseDouble(responseJson.get("answer").toString());
+                    float answer = Float.parseFloat(responseJson.get("answer").toString());
                     Home.this.todayPercent = answer;
-                    Log.v("====================", String.valueOf(todayPercent.intValue()));
-                    mPieChart.addPieSlice(new PieModel("Recycle Percentage", todayPercent.intValue(), Color.parseColor("#FE6DA8")));
-                    mPieChart.addPieSlice(new PieModel("Trash Percentage", 100 - todayPercent.intValue(), Color.parseColor("#56B7F1")));
+                    Log.v("====================", String.valueOf(Math.round(todayPercent)));
+                    mPieChart.addPieSlice(new PieModel("Recycle Percentage", Math.round(todayPercent), Color.parseColor("#FE6DA8")));
+                    mPieChart.addPieSlice(new PieModel("Trash Percentage", 100 - Math.round(todayPercent), Color.parseColor("#56B7F1")));
                     mPieChart.startAnimation();
                     pieChartCaptionLabel.setText("Your recycle/trash ratio is " + String.valueOf(answer) + "%, see how your friends did in scoreboard.");
-
-
+                    user.setPercent(answer);
+//                    SharedPreferences.Editor editor = userIdPref.edit();
+//                    editor.putFloat(PERCENT, answer);
+//                    editor.commit();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

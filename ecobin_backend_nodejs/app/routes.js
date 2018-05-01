@@ -18,7 +18,7 @@ module.exports = (app, dbAdapter) => {
 			res.json({
 				"status" : "success",
 				"userId" : userId,
-				"facebookId" : req.boey.facebookid
+				"facebookId" : req.body.facebookid
 			});
 		}, () => {
 			res.json({
