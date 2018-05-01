@@ -4,6 +4,8 @@ package edu.cmu.ecobin;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -29,15 +31,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.TimeZone;
 
 /**
@@ -52,7 +60,9 @@ public class Score extends Fragment {
     User user = User.getInstance();
     String friendFid;
     Map<String, Friend> map;
-
+    Queue<Friend> queue;
+    View rootView;
+    CustomListAdapter adapter;
     String[] itemname ={
             "Joey",
     };
@@ -60,6 +70,11 @@ public class Score extends Fragment {
     Integer[] imgid={
             R.drawable.joey,
     };
+
+
+    List<String> names;
+    List<Bitmap> imgs;
+    List<Float> numbers;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -69,11 +84,14 @@ public class Score extends Fragment {
         Log.v("Score", user.getFacebookID());
         String fid = "/" + user.getFacebookID() + "/friends";
         map = new HashMap<>();
+        queue = new PriorityQueue<>();
+        numbers = new ArrayList<>();
         Friend me = new Friend(user.getFacebookID());
         map.put(user.getFacebookID(), me);
         me.setUserid(user.getUserID());
         me.setName(user.getUserName());
         me.setPercent(user.getPercent());
+        me.setPic(user.getPic());
         Log.v("my infomation", map.get(user.getFacebookID()).toString());
 
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
@@ -119,12 +137,10 @@ public class Score extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.score, container, false);
+        rootView = inflater.inflate(R.layout.score, container, false);
 
 
         super.onCreate(savedInstanceState);
-        //getActivity().setContentView(R.layout.score);
-
         CustomListAdapter adapter=new CustomListAdapter(getActivity(), itemname, imgid);
 
 
@@ -137,22 +153,10 @@ public class Score extends Fragment {
         user_number = (TextView) rootView.findViewById(R.id.user_number);
         user_number.setText("32%");
 
-
         list=(ListView)rootView.findViewById(R.id.list);
 
         list.setAdapter(adapter);
 
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                // TODO Auto-generated method stub
-                String Slecteditem= itemname[+position];
-                Toast.makeText(getActivity().getApplicationContext(), Slecteditem, Toast.LENGTH_SHORT).show();
-
-            }
-        });
 
         return rootView;
     }
@@ -342,10 +346,26 @@ public class Score extends Fragment {
                     String friend_fid = responseJson.get("fid").toString();
 
                     map.get(friend_fid).setPercent(Float.parseFloat(friend_percent));
-                    Log.v("friend infomation", map.get(friend_fid).toString());
 
 
-                    Log.v("Score Activity", friend_percent);
+                    try {
+                        String urlStr = "https://graph.facebook.com/"+friend_fid+"/picture?width=150&height=150";
+                        Log.v("profile pic link", urlStr);
+                        URL img_value = new URL(urlStr);
+                        Bitmap icon = BitmapFactory.decodeStream(img_value.openConnection().getInputStream());
+                        map.get(friend_fid).setPic(icon);
+
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    for (Friend friend : map.values()) {
+                        queue.add(friend);
+                        Log.v("iter", friend.toString());
+                    }
+                    int rank = setFriendsInList(queue);
+                    Log.v("my rank is ", String.valueOf(rank));
+                    
 
                 } catch(JSONException e) {
                     e.printStackTrace();
@@ -353,6 +373,25 @@ public class Score extends Fragment {
 
             }
         }
+    }
+    private int setFriendsInList(Queue<Friend> queue){
+        int rank = -1;
+        int counter = 0;
+        if (queue.size() > 0) {
+            names = new ArrayList<>();
+            imgs = new ArrayList<>();
+            while (!queue.isEmpty()) {
+                Friend f = queue.poll();
+                counter++;
+                if (f.getFacebookid().equals(user.getFacebookID())) {
+                    rank = counter;
+                }
+                names.add(f.getName());
+                imgs.add(f.getPic());
+                numbers.add(f.getPercent());
+            }
+        }
+        return rank;
     }
 
 }

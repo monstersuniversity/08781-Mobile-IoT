@@ -23,10 +23,6 @@
     <item android:title="General">
         <menu>
             <item
-                android:id="@+id/nav_settings"
-                android:icon="@drawable/ic_menu_manage"
-                android:title="Settings" />
-            <item
                 android:id="@+id/nav_signout"
                 android:icon="@drawable/icon_signout"
                 android:title="Logout" />

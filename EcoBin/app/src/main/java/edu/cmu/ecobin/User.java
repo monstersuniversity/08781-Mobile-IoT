@@ -1,5 +1,7 @@
 package edu.cmu.ecobin;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by Onedollar on 4/25/18.
  */
@@ -11,6 +13,7 @@ public class User {
     private static String userName;
     private static String facebookID;
     private static float percent;
+    private static Bitmap pic;
     private User(){};
     public static User getInstance(){
         if (user == null){
@@ -22,6 +25,11 @@ public class User {
     public void setUserID(String userID){
         User u = User.getInstance();
         u.userID = userID;
+    }
+
+    public void setPic(Bitmap pic){
+        User u = User.getInstance();
+        u.pic = pic;
     }
     public void setPercent(float percent){
         User u = User.getInstance();
@@ -43,6 +51,10 @@ public class User {
     public String getUserID(){
         User u = User.getInstance();
         return u.userID;
+    }
+    public Bitmap getPic(){
+        User u = User.getInstance();
+        return u.pic;
     }
     public float getPercent(){
         User u = User.getInstance();

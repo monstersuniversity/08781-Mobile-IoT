@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity
             Log.v("profile pic link", urlStr);
             URL img_value = new URL(urlStr);
             Bitmap prof_icon = BitmapFactory.decodeStream(img_value.openConnection().getInputStream());
+            user.setPic(prof_icon);
             if (prof_icon == null) {
                 Log.v(TAG, "null");
             }
@@ -120,22 +121,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.voice) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     private void displayMenuActivity(int id) {
         Fragment fragment = null;
@@ -148,9 +133,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_history:
                 fragment = new History();
-                break;
-            case R.id.nav_tree:
-                fragment = new Tree();
                 break;
             case R.id.nav_signout:
                 LoginManager.getInstance().logOut();
