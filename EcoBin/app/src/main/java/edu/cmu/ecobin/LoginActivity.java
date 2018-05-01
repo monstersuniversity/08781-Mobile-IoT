@@ -62,7 +62,7 @@ public class LoginActivity extends Activity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
         final LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setReadPermissions(Arrays.asList(EMAIL));
+        loginButton.setReadPermissions(Arrays.asList(EMAIL, "user_friends"));
         mCallbackManager = CallbackManager.Factory.create();
         final Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
         Intent receivedIntent = getIntent();

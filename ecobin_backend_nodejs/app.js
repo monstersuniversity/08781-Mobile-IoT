@@ -58,7 +58,8 @@ app.post('/add', function(req, res, next) {
             var newvalues = {
                 $set: {
                     total: req.body.total,
-                    recycle: req.body.recycle
+                    recycle: req.body.recycle,
+					created_at: new Date(new Date().getTime() + (-8) * 3600 * 1000)
                 }
             };
             dbo.collection("data").updateOne(query, newvalues, function(err, result) {
@@ -145,14 +146,14 @@ app.post('/find_by_week', function(req, res, next) {
 			var old_day = old_dateObj.getDate();
 			var old_year = old_dateObj.getFullYear();
 
-			curr_date = year + "," + month + "," + day;
-			prev_date = old_year + "," + old_month + "," + old_day;
-			console.log(curr_date);
-			console.log(prev_date);
+			e_date = year + "," + month + "," + day;
+			s_date = old_year + "," + old_month + "," + old_day;
+			console.log(s_date);
+			console.log(e_date);
             var query = {
                 "created_at": {
-                    $lt: new Date(curr_date),
-					$gte: new Date(prev_date),
+                    $lt: new Date(e_date),
+					$gte: new Date(s_date),
                 },
                 id: req.body.id
             }
@@ -163,13 +164,22 @@ app.post('/find_by_week', function(req, res, next) {
                     });
                 } else {
 					var totalPercent = 0;
-					for (var i = 0; i < result.length; i++) {
-						totalPercent = totalPercent + result[i].recycle / result[i].total;
+					if (result.length == 0) {
+						res.send({
+							"answer" : 0,
+							"number" : req.body.n
+						});
+					} else {
+						for (var i = 0; i < result.length; i++) {
+							totalPercent = totalPercent + result[i].recycle / result[i].total;
+						}
+						db.close();
+						res.send({
+							"answer" : totalPercent / result.length * 100,
+							"number" : req.body.n
+						});
 					}
-                    db.close();
-                    res.send({
-						"answer" : totalPercent / result.length * 100
-					});
+
                 }
             });
         }
@@ -219,6 +229,34 @@ app.post('/find_by_month', function(req, res, next) {
         }
     });
 });
+
+
+app.post('/getMonth', function(req, res, next) {
+	var request = require('request');
+	request.post(
+	    'http://localhost:3000/find_by_week',
+	    { json: { "id": req.body.id, "n":7} },
+	    function (error, response, body) {
+	        if (!error && response.statusCode == 200) {
+	            console.log(body)
+				res.send({
+					"answer" : "2"
+				});
+	        }
+	    }
+	);
+});
+function getWeekResult(days) {
+	   var options = {
+	   method: 'GET',
+	   uri: 'https://api.call2.com',
+		   qs: {
+			   access_token: _accessToken,
+		   }
+	   };
+	   return request(options);
+}
+
 
 app.listen(port, (err) => {
     if (err) {

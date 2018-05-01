@@ -16,6 +16,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Onedollar on 2/22/18.
  */
@@ -25,36 +34,52 @@ public class Score extends Fragment {
     ListView list;
     ImageView user_image;
     TextView user_name, user_rank, user_number;
-
+    User user = User.getInstance();
 
     String[] itemname ={
             "Joey",
-            "Chandler",
-            "Rachel",
-            "Monica",
-            "Me",
-            "Ross",
-            "Tracy",
-            "Andrew"
     };
 
     Integer[] imgid={
             R.drawable.joey,
-            R.drawable.chandler,
-            R.drawable.phoebe,
-            R.drawable.monica,
-            R.drawable.rachel,
-            R.drawable.ross,
-            R.drawable.andrew,
-            R.drawable.large_eagle_black,
     };
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         getActivity().setTitle("Scoreboard");
+        Log.v("Score", user.getFacebookID());
+        String fid = "/" + user.getFacebookID() + "/friends";
+
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        GraphRequest request = GraphRequest.newGraphPathRequest(
+                accessToken,
+                fid,
+                new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse response) {
+                        try {
+                            JSONObject object = response.getJSONObject();
+                            JSONArray arrayOfUsersInFriendList= object.getJSONArray("data");
+                            String friendName = arrayOfUsersInFriendList.getJSONObject(0).get("name").toString();
+                            String friendFid = arrayOfUsersInFriendList.getJSONObject(0).get("id").toString();
+                            Log.v("", friendFid);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+
+        Bundle parameters = new Bundle();
+        parameters.putString("field", "friends");
+        request.setParameters(parameters);
+        request.executeAsync();
 
     }
+
 
 
     @Nullable
@@ -70,7 +95,7 @@ public class Score extends Fragment {
 
 
         user_image = (ImageView)rootView.findViewById(R.id.user_image);
-        user_image.setImageResource(imgid[4]);
+        user_image.setImageResource(imgid[0]);
         user_name = (TextView) rootView.findViewById(R.id.user_name);
         user_name.setText("Me");
         user_rank = (TextView) rootView.findViewById(R.id.user_rank);

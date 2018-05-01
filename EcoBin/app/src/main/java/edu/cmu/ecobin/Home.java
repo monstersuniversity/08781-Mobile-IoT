@@ -129,14 +129,11 @@ public class Home extends Fragment {
                     }
                     String responseString = builder.toString();
                     Log.v(getClass().getName(), "Response String: " + responseString);
-                    JSONArray jsonArray = new JSONArray(responseString);
+                    JSONObject jsonResponse = new JSONObject(responseString);
                     // Close connection and return response code.
-                    if (jsonArray.length() == 0) {
-                        return null;
-                    }
                     myConnection.disconnect();
 
-                    return jsonArray.getJSONObject(0);
+                    return jsonResponse;
                 } else {
                     // Error handling code goes here
                     String a = "" + myConnection.getResponseCode();
@@ -157,19 +154,14 @@ public class Home extends Fragment {
                 try {
                     Log.v("fetch data success", responseJson.getClass().getName());
                     Log.v("fetch data success", "get data from object");
-                    Log.v("====================", responseJson.get("total").toString());
-                    Log.v("====================", responseJson.get("recycle").toString());
-                    Double total = Double.parseDouble(responseJson.get("total").toString());
-                    Double recycle = Double.parseDouble(responseJson.get("recycle").toString());
-                    Double result = recycle / total * 100;
-                    Home.this.todayPercent = result;
-
-                    Log.v("====================", String.valueOf(result));
+                    Log.v("====================", responseJson.get("answer").toString());
+                    Double answer = Double.parseDouble(responseJson.get("answer").toString());
+                    Home.this.todayPercent = answer;
                     Log.v("====================", String.valueOf(todayPercent.intValue()));
                     mPieChart.addPieSlice(new PieModel("Recycle Percentage", todayPercent.intValue(), Color.parseColor("#FE6DA8")));
                     mPieChart.addPieSlice(new PieModel("Trash Percentage", 100 - todayPercent.intValue(), Color.parseColor("#56B7F1")));
                     mPieChart.startAnimation();
-                    pieChartCaptionLabel.setText("Your recycle/trash ratio is " + String.valueOf(result) + "%, see how your friends did in scoreboard.");
+                    pieChartCaptionLabel.setText("Your recycle/trash ratio is " + String.valueOf(answer) + "%, see how your friends did in scoreboard.");
 
 
                 } catch (JSONException e) {
@@ -181,11 +173,12 @@ public class Home extends Fragment {
     }
     private String fetchDataRequestBody(){
         TimeZone tz = TimeZone.getTimeZone("America/New_York");
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T''Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); // Quoted "Z" to indicate UTC, no timezone offset
         df.setTimeZone(tz);
         String nowAsISO = df.format(new Date());
+        // TODO: userid
         String body = "{"
-                + "\"id\": \"" + "2" + "\""
+                + "\"id\": \"" + user.getUserID() + "\""
                 + ",\"time\": \"" + nowAsISO + "\""
                 + "}";
         Log.v("fetch data body", body);
