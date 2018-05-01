@@ -231,32 +231,6 @@ app.post('/find_by_month', function(req, res, next) {
 });
 
 
-app.post('/getMonth', function(req, res, next) {
-	var request = require('request');
-	request.post(
-	    'http://localhost:3000/find_by_week',
-	    { json: { "id": req.body.id, "n":7} },
-	    function (error, response, body) {
-	        if (!error && response.statusCode == 200) {
-	            console.log(body)
-				res.send({
-					"answer" : "2"
-				});
-	        }
-	    }
-	);
-});
-function getWeekResult(days) {
-	   var options = {
-	   method: 'GET',
-	   uri: 'https://api.call2.com',
-		   qs: {
-			   access_token: _accessToken,
-		   }
-	   };
-	   return request(options);
-}
-
 
 app.listen(port, (err) => {
     if (err) {

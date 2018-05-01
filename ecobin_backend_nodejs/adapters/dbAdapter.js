@@ -1,10 +1,10 @@
 module.exports = (connection) => {
     return {
-        setUserSession: (name, sessionToken, email) => {
+        setUserSession: (name, sessionToken, email, facebookid) => {
             let promise = new Promise((resolve, reject) => {
                 name = mysql_real_escape_string(name);
-                var columnNames = 'name, session, email';
-                var columnValues = `'${name}', '${sessionToken}', '${email}'`;
+                var columnNames = 'name, session, email, facebookid';
+                var columnValues = `'${name}', '${sessionToken}', '${email}', '${facebookid}'`;
                 var checkExistsQueryString = `SELECT id FROM users WHERE email = '${email}'`;
                 var updateSessionQueryString = `UPDATE users SET session = '${sessionToken}' WHERE email = '${email}'`;
                 var createUserQueryString = `INSERT INTO users (${columnNames}) VALUES (${columnValues})`;

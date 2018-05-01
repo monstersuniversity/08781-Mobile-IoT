@@ -301,6 +301,7 @@ public class LoginActivity extends Activity {
                 + "\"name\": \"" + this.name + "\""
                 + ",\"email\": \"" + this.email + "\""
                 + ",\"sessionToken\": \"" + this.fbLoginResult.getAccessToken().getToken() + "\""
+                + ", \"facebookid\" : \"" + this.facebookid + "\""
                 + "}";
         Log.v("setuserreq body", body);
         return body;
