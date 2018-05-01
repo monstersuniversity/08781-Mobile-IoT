@@ -188,8 +188,8 @@ app.post('/find_by_month', function(req, res, next) {
 			end_date = req.body.year + "," + req.body.emonth;
 			if (req.body.emoth == 13){
 				y = req.body.year + 1;
-				m = 1;
-				end_date = y + m;
+				m = "1";
+				end_date = y + "," + m;
 			}
 			console.log(new Date(start_date));
 			console.log(new Date(end_date));
