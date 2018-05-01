@@ -2,6 +2,9 @@ package edu.cmu.ecobin;
 
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,6 +28,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * Created by Onedollar on 2/22/18.
  */
@@ -35,6 +48,7 @@ public class Score extends Fragment {
     ImageView user_image;
     TextView user_name, user_rank, user_number;
     User user = User.getInstance();
+    String friendFid;
 
     String[] itemname ={
             "Joey",
@@ -64,7 +78,11 @@ public class Score extends Fragment {
                             JSONArray arrayOfUsersInFriendList= object.getJSONArray("data");
                             String friendName = arrayOfUsersInFriendList.getJSONObject(0).get("name").toString();
                             String friendFid = arrayOfUsersInFriendList.getJSONObject(0).get("id").toString();
+                            Score.this.friendFid = friendFid;
                             Log.v("", friendFid);
+
+                            String requestBody = buildGetIdRequestBody();
+                            new getFriendID(requestBody).execute();
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -78,8 +96,9 @@ public class Score extends Fragment {
         request.setParameters(parameters);
         request.executeAsync();
 
-    }
 
+
+    }
 
 
     @Nullable
@@ -123,5 +142,194 @@ public class Score extends Fragment {
         return rootView;
     }
 
+    private class getFriendID extends AsyncTask<String, String, JSONObject> {
+        String body;
+
+        getFriendID(String body) {
+            this.body = body;
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... strings) {
+            // Create URL
+            try {
+                URL myEndpoint = new URL("http://ec2-52-87-198-206.compute-1.amazonaws.com:3000/getFriendId");
+
+                HttpURLConnection myConnection
+                        = (HttpURLConnection) myEndpoint.openConnection();
+
+                myConnection.setRequestMethod("POST");
+
+
+                myConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+                myConnection.setRequestProperty("Accept", "application/json");
+                myConnection.setDoOutput(true);
+                myConnection.setDoInput(true);
+
+                byte[] outputInBytes = this.body.getBytes("UTF-8");
+                OutputStream os = myConnection.getOutputStream();
+                os.write(outputInBytes);
+                os.close();
+
+
+                if (myConnection.getResponseCode() == 200) {
+
+                    // Read data from response.
+                    StringBuilder builder = new StringBuilder();
+                    BufferedReader responseReader = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
+                    String line = responseReader.readLine();
+                    while (line != null) {
+                        builder.append(line);
+                        line = responseReader.readLine();
+                    }
+                    String responseString = builder.toString();
+                    Log.v(getClass().getName(), "Response String: " + responseString);
+                    JSONObject responseJson = new JSONObject(responseString);
+                    // Close connection and return response code.
+                    myConnection.disconnect();
+
+                    return responseJson;
+                } else {
+                    // Error handling code goes here
+                    String a = "" + myConnection.getResponseCode();
+                    Log.i("Failure- Status Code", a);
+                    Log.i("Failure- StatusMessage", myConnection.getResponseMessage());
+
+                }
+                myConnection.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+        protected void onPostExecute(JSONObject responseJson) {
+            if(responseJson!= null && responseJson.has("status") ) {
+                try {
+                    String result = responseJson.getString("status");
+                    Log.v("result in postexecute", result);
+                    if (result.equals("success")){
+                        Log.v("session API success", "result");
+                        Log.v("Score Activity", "responseJson = " + responseJson.toString());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(responseJson!= null && responseJson.has("userId")){
+                try {
+                    String fid = responseJson.get("userId").toString();
+                    Log.v("get friend id", fid);
+                    String reqBody = fetchDataRequestBody(fid);
+                    new fetchFriendData(reqBody).execute();
+
+                } catch(JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+    private String buildGetIdRequestBody(){
+        String body = "{"
+                + "\"facebookid\" : \"" + this.friendFid + "\""
+                + "}";
+        Log.v("getidreq body", body);
+        return body;
+    }
+
+    private String fetchDataRequestBody(String fid){
+        TimeZone tz = TimeZone.getTimeZone("America/New_York");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); // Quoted "Z" to indicate UTC, no timezone offset
+        df.setTimeZone(tz);
+        String nowAsISO = df.format(new Date());
+        // TODO: userid
+        String body = "{"
+                + "\"id\": \"" + fid + "\""
+                + ",\"time\": \"" + nowAsISO + "\""
+                + "}";
+        Log.v("fetch data body", body);
+        return body;
+    }
+
+
+
+    private class fetchFriendData extends AsyncTask<String, String, JSONObject> {
+        String body;
+
+        fetchFriendData(String body) {
+            this.body = body;
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... strings) {
+            // Create URL
+            try {
+                URL myEndpoint = new URL("http://ec2-52-87-198-206.compute-1.amazonaws.com:3000/find_by_time");
+
+                HttpURLConnection myConnection
+                        = (HttpURLConnection) myEndpoint.openConnection();
+
+                myConnection.setRequestMethod("POST");
+
+
+                myConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+                myConnection.setRequestProperty("Accept", "application/json");
+                myConnection.setDoOutput(true);
+                myConnection.setDoInput(true);
+
+                byte[] outputInBytes = this.body.getBytes("UTF-8");
+                OutputStream os = myConnection.getOutputStream();
+                os.write(outputInBytes);
+                os.close();
+
+
+                if (myConnection.getResponseCode() == 200) {
+
+                    // Read data from response.
+                    StringBuilder builder = new StringBuilder();
+                    BufferedReader responseReader = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
+                    String line = responseReader.readLine();
+                    while (line != null) {
+                        builder.append(line);
+                        line = responseReader.readLine();
+                    }
+                    String responseString = builder.toString();
+                    Log.v(getClass().getName(), "Response String: " + responseString);
+                    JSONObject jsonResponse = new JSONObject(responseString);
+                    // Close connection and return response code.
+                    myConnection.disconnect();
+
+                    return jsonResponse;
+                } else {
+                    // Error handling code goes here
+                    String a = "" + myConnection.getResponseCode();
+                    Log.i("Failure- Status Code", a);
+                    Log.i("Failure- StatusMessage", myConnection.getResponseMessage());
+
+                }
+                myConnection.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(JSONObject responseJson) {
+            if (responseJson != null) {
+                try{
+
+                    String friend_percent = responseJson.get("answer").toString();
+                    Log.v("Score Activity", friend_percent);
+
+                } catch(JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
 
 }
