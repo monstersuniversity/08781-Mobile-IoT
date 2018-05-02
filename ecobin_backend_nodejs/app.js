@@ -198,11 +198,12 @@ app.post('/find_by_month', function(req, res, next) {
             console.log('mongodb connected');
 			start_date = req.body.year + "," + req.body.smonth;
 			end_date = req.body.year + "," + req.body.emonth;
-			if (req.body.emoth == 13){
-				y = req.body.year + 1;
+			if (req.body.emonth == 13){
+				y = parseInt(req.body.year )+ 1;
 				m = "1";
 				end_date = y + "," + m;
 			}
+            console.log(end_date);
 			console.log(new Date(start_date));
 			console.log(new Date(end_date));
             var query = {
@@ -219,13 +220,21 @@ app.post('/find_by_month', function(req, res, next) {
                     });
                 } else {
 					var totalPercent = 0;
-					for (var i = 0; i < result.length; i++) {
-						totalPercent = totalPercent + result[i].recycle / result[i].total;
-					}
-                    db.close();
-                    res.send({
-						"answer" : totalPercent / result.length * 100
-					});
+                    if (result.length == 0) {
+                        res.send({
+                            "answer" : 0
+                        });
+                        db.close();
+                    } else {
+                        for (var i = 0; i < result.length; i++) {
+                            totalPercent = totalPercent + result[i].recycle / result[i].total;
+                        }
+                        db.close();
+                        res.send({
+                            "answer" : totalPercent / result.length * 100
+                        });
+                    }
+
                 }
             });
         }

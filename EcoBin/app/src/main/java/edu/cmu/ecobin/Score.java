@@ -39,6 +39,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,17 +65,21 @@ public class Score extends Fragment {
     View rootView;
     CustomListAdapter adapter;
     String[] itemname ={
-            "Joey",
+            "Joey"
     };
 
     Integer[] imgid={
-            R.drawable.joey,
+            R.drawable.joey
     };
 
 
     List<String> names;
     List<Bitmap> imgs;
     List<Float> numbers;
+
+//    String[] names;
+//    Bitmap[] imgs;
+//    float[] numbers;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -85,7 +90,14 @@ public class Score extends Fragment {
         String fid = "/" + user.getFacebookID() + "/friends";
         map = new HashMap<>();
         queue = new PriorityQueue<>();
+
         numbers = new ArrayList<>();
+        names = new ArrayList<>();
+        imgs = new ArrayList<>();
+
+        imgs.add(user.getPic());
+
+
         Friend me = new Friend(user.getFacebookID());
         map.put(user.getFacebookID(), me);
         me.setUserid(user.getUserID());
@@ -139,23 +151,26 @@ public class Score extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.score, container, false);
 
-
         super.onCreate(savedInstanceState);
-        CustomListAdapter adapter=new CustomListAdapter(getActivity(), itemname, imgid);
 
 
-        user_image = (ImageView)rootView.findViewById(R.id.user_image);
-        user_image.setImageResource(imgid[0]);
-        user_name = (TextView) rootView.findViewById(R.id.user_name);
-        user_name.setText("Me");
-        user_rank = (TextView) rootView.findViewById(R.id.user_rank);
-        user_rank.setText("Rank: 5");
-        user_number = (TextView) rootView.findViewById(R.id.user_number);
-        user_number.setText("32%");
+//        CustomListAdapter adapter=new CustomListAdapter(getActivity(), itemname, imgid);
+//
+//        user_image = (ImageView)rootView.findViewById(R.id.user_image);
+//        user_image.setImageResource(imgid[0]);
+//        user_name = (TextView) rootView.findViewById(R.id.user_name);
+//        user_name.setText("Me");
+//        user_rank = (TextView) rootView.findViewById(R.id.user_rank);
+//        user_rank.setText("Rank: 5");
+//        user_number = (TextView) rootView.findViewById(R.id.user_number);
+//        user_number.setText("32%");
+//
+//        list=(ListView)rootView.findViewById(R.id.list);
+//
+//        list.setAdapter(adapter);
 
-        list=(ListView)rootView.findViewById(R.id.list);
 
-        list.setAdapter(adapter);
+
 
 
         return rootView;
@@ -364,8 +379,15 @@ public class Score extends Fragment {
                         Log.v("iter", friend.toString());
                     }
                     int rank = setFriendsInList(queue);
+                    Log.v("names", Arrays.toString(names.toArray()));
+                    Log.v("numbers", Arrays.toString(numbers.toArray()));
                     Log.v("my rank is ", String.valueOf(rank));
-                    
+
+                    CustomListAdapter adapter=new CustomListAdapter(getActivity(), names, imgs, numbers);
+                    list=(ListView)rootView.findViewById(R.id.list);
+                    list.setAdapter(adapter);
+
+
 
                 } catch(JSONException e) {
                     e.printStackTrace();
@@ -378,8 +400,7 @@ public class Score extends Fragment {
         int rank = -1;
         int counter = 0;
         if (queue.size() > 0) {
-            names = new ArrayList<>();
-            imgs = new ArrayList<>();
+
             while (!queue.isEmpty()) {
                 Friend f = queue.poll();
                 counter++;

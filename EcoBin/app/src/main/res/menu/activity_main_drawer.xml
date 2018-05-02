@@ -14,10 +14,6 @@
             android:id="@+id/nav_history"
             android:icon="@drawable/icon_history"
             android:title="History" />
-        <item
-            android:id="@+id/nav_tree"
-            android:icon="@drawable/icon_tree"
-            android:title="My Tree" />
     </group>
 
     <item android:title="General">
