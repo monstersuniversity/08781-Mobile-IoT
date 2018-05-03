@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.08"
-        android:text="This Week"
+        android:text="Today"
         android:textAlignment="viewStart"
         android:textSize="24sp"
         android:textStyle="bold" />

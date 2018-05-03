@@ -10,7 +10,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:weightSum="1">
 
     <ImageView
         android:id="@+id/profile_pic"
@@ -30,7 +31,8 @@
     <TextView
         android:id="@+id/profile_email"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ross@andrew.cmu.edu" />
+        android:layout_height="match_parent"
+        android:text="ross@andrew.cmu.edu"
+        android:textSize="10sp" />
 
 </LinearLayout>
