@@ -42,13 +42,6 @@
         android:text="Your recycle/trash ratio is 0%, see how your friends did in scoreboard." />
 
     <TextView
-        android:id="@+id/textView8"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.02"
-        android:text="" />
-
-    <TextView
         android:id="@+id/FunFactLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,10 +59,12 @@
 
 
         <TextView
+            android:id="@+id/funfact"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:editable="false"
             android:text="Every three months, Americans throw away enough aluminum into landfills to rebuild the United State's entire commercial air fleet."
-            android:editable="false"/>
+            android:textAlignment="viewStart" />
 
     </ScrollView>
 

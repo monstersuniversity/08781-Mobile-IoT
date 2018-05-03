@@ -231,7 +231,8 @@ app.post('/find_by_month', function(req, res, next) {
                         }
                         db.close();
                         res.send({
-                            "answer" : totalPercent / result.length * 100
+                            "answer" : totalPercent / result.length * 100,
+                            "m" : req.body.smonth
                         });
                     }
 

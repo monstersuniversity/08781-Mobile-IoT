@@ -44,6 +44,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 import java.util.TimeZone;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -57,10 +58,12 @@ public class Home extends Fragment {
     org.eazegraph.lib.charts.PieChart mPieChart;
     public static final String PERCENT = "percent";
     String TAG = "Home";
-    TextView view;
+    TextView fun;
     TextView pieChartCaptionLabel;
     SharedPreferences userIdPref;
     User user = User.getInstance();
+    String[] facts = {"Every three months, Americans throw away enough aluminum into landfills to rebuild the United State's entire commercial air fleet."};
+
     float todayPercent;
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -76,12 +79,13 @@ public class Home extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.home, container, false);
 
-        view = (TextView)rootView.findViewById(R.id.textView8);
         pieChartCaptionLabel = (TextView)rootView.findViewById(R.id.PieChartCaptionLabel);
-        view.setText(user.getUserID() + "   " + user.getUserEmail() + " " + user.getUserName() + " " + user.getFacebookID());
         mPieChart = rootView.findViewById(R.id.piechart);
 
-
+        fun = (TextView)rootView.findViewById(R.id.funfact);
+        Random r = new Random();
+        int x = r.nextInt(facts.length);
+        fun.setText(facts[x]);
         String requestBody = fetchDataRequestBody();
         new fetchData(requestBody).execute();
 

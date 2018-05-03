@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
@@ -49,6 +50,7 @@ public class LoginActivity extends Activity {
     String name;
     String email;
     String facebookid;
+    ImageView loginImage;
     String TAG = "LoginActivity";
 //    private boolean directUserToLogout = false;
 
@@ -59,7 +61,8 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.login);
         LoginButton mLoginButton = findViewById(R.id.login_button);
 
-
+        loginImage = (ImageView)findViewById(R.id.loginImage);
+        loginImage.setImageResource(R.drawable.ecobin);
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
         final LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
